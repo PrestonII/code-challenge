@@ -69,7 +69,7 @@ Server.prototype.findRestaurants = function(category, result) {
       params: {
         entity_type: location_type,
         entity_id: location,
-        category: category,
+        cuisines: category,
         order: sort
       }
     })
