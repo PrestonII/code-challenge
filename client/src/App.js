@@ -77,21 +77,20 @@ class App extends React.Component {
 
   findCuisines() {
     let promise = new Promise((resolve, reject) => {
-      let val;
 
       fetch('api/cuisines')
         .then(resp => {
-          val = resp.json();
+          return resp.json();
         })
-        .then(() => {
-          this.all_cuisines = val;
+        .then((data) => {
+          this.all_cuisines = data.cuisines;
         })
         .catch(err => {
           this.logError(err);
           reject(err);
         });
 
-      resolve(val);
+      resolve(this.all_cuisines);
     })
     .catch(err =>{
       console.log(err);
@@ -101,9 +100,10 @@ class App extends React.Component {
   }
 
   findRestaurants() {
-    var cats = this.all_cuisines;
+    var cuisines = this.all_cuisines;
 
-    cats.forEach(cat => {
+    cuisines.forEach(cuis => {
+      let cat = cuis.cuisine.cuisine_id;
       let rests = this.findRestaurantForCategory(cat);
       if(Object.keys(rests).length > 0){
         rests.map(rest => {
