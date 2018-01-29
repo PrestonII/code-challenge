@@ -4,7 +4,7 @@ const config = require('./config-defaults');
 function Server() {
   console.log("Creating new axios-based server");
   this.cuisines = null;
-  this.restaurants = null;
+  this.restaurants = {};
 }
 
 Server.prototype.getCategories = function(result) {
@@ -16,8 +16,8 @@ Server.prototype.getCategories = function(result) {
 }
 
 Server.prototype.getRestaurants = function(category, result) {
-  if(this.restaurants !== null) {
-    result.send(this.restaurants);
+  if(this.restaurants.hasOwnProperty(category)) {
+    result.send(this.restaurants[category]);
   }
 
   this.findRestaurants(category, result);
@@ -27,8 +27,8 @@ Server.prototype.setCuisineData = function(data) {
   this.cuisines = data;
 }
 
-Server.prototype.setRestaurantData = function(data) {
-  this.restaurants = data;
+Server.prototype.setRestaurantData = function(cuisineType, data) {
+  this.restaurants[cuisineType] = data;
 }
 
 Server.prototype.findCuisines = function(result) {
@@ -75,8 +75,8 @@ Server.prototype.findRestaurants = function(category, result) {
     })
     .then(res => {
       console.log(res.data);
-      this.setRestaurantData(res.data);
-      result.send(this.restaurants);
+      this.setRestaurantData(category, res.data);
+      result.send(this.restaurants[category]);
     })
     .catch(error => {
       console.log("Error!");
