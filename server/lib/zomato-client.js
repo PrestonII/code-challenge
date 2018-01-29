@@ -15,8 +15,20 @@ Server.prototype.getCategories = function(result) {
   this.findCuisines(result);
 }
 
+Server.prototype.getRestaurants = function(category, result) {
+  if(this.restaurants !== null) {
+    result.send(this.restaurants);
+  }
+
+  this.findRestaurants(category, result);
+}
+
 Server.prototype.setCuisineData = function(data) {
   this.cuisines = data;
+}
+
+Server.prototype.setRestaurantData = function(data) {
+  this.restaurants = data;
 }
 
 Server.prototype.findCuisines = function(result) {
@@ -43,12 +55,7 @@ Server.prototype.findCuisines = function(result) {
     });
 }
 
-Server.prototype.getRestaurants = function(category, result) {
-  /* 
-   need category (chosen by user)
-   need entity_id (location which should always be manhattan, new york for now)
-   need entity_type (always city in this case)
-  */
+Server.prototype.findRestaurants = function(category, result) {
   const url = config.url.restaurants;
   const location = '94741';
   const location_type = 'zone';
@@ -68,16 +75,13 @@ Server.prototype.getRestaurants = function(category, result) {
     })
     .then(res => {
       console.log(res.data);
-      result.send(res.data);
+      this.setRestaurantData(res.data);
+      result.send(this.restaurants);
     })
     .catch(error => {
       console.log("Error!");
       console.log(error);
     });
-
 }
 
-// var server = new Server();
-// server.getCategories();
-// server.getRestaurants();
 module.exports = exports = new Server();
