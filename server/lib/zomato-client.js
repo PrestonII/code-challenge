@@ -75,7 +75,8 @@ Server.prototype.findRestaurants = function(category, result) {
     })
     .then(res => {
       console.log(res.data);
-      this.setRestaurantData(category, res.data);
+      let value = res.data.hasOwnProperty('restaurants') ? res.data.restaurants : new Array();
+      this.setRestaurantData(category, value);
       result.send(this.restaurants[category]);
     })
     .catch(error => {
