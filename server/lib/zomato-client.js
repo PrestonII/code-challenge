@@ -3,28 +3,47 @@ const config = require('./config-defaults');
 
 function Server() {
   console.log("Creating new axios-based server");
+  this.cuisines = null;
+  this.restaurants = null;
 }
 
-Server.prototype.getCategories = function() {
-  const url = config.url.categories;
+Server.prototype.getCategories = function(result) {
+  if(this.cuisines !== null) {
+    result.send(this.cuisines);
+  }
+
+  this.findCuisines(result);
+}
+
+Server.prototype.setCuisineData = function(data) {
+  this.cuisines = data;
+}
+
+Server.prototype.findCuisines = function(result) {
+  const url = config.url.cuisines;
+  const city_id = 280;
+  const sort = 'asc';
 
   axios
     .get(url, {
       headers: {
-        'user-key' : config.user_key
+        'user-key' : config.user_key,
+      },
+      params: {
+        city_id: city_id,
       }
     })
     .then(res => {
       console.log(res.data);
-      return res.data;
+      this.setCuisineData(res.data);
+      result.send(this.cuisines);
     })
-    .catch(error => {
-      console.log("Error!");
-      console.log(error);
+    .catch(err => {
+      console.log(`Error! ${err}`);
     });
 }
 
-Server.prototype.getRestaurants = function(category) {
+Server.prototype.getRestaurants = function(category, result) {
   /* 
    need category (chosen by user)
    need entity_id (location which should always be manhattan, new york for now)
@@ -49,7 +68,7 @@ Server.prototype.getRestaurants = function(category) {
     })
     .then(res => {
       console.log(res.data);
-      return res.data;
+      result.send(res.data);
     })
     .catch(error => {
       console.log("Error!");
