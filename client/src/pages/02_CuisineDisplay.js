@@ -11,6 +11,7 @@ class CategoryPage extends Component {
     this.state = {
       categories: null,
     };
+    this.cuisines = this.props.cuisines;
     this.getCategories = this.getCategories.bind(this);
   }
 
