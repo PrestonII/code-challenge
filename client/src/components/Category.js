@@ -28,8 +28,8 @@ class Category extends React.Component {
 
   getRestaurants() {
     console.log('Getting restaurants...');
-    axios
-    .get(this.config.url.restaurants, {
+    fetch('/api/restaurants', {
+      method: 'GET', 
       headers: {
         "user-key" : this.config.user_key,
         "category" : this.id,
@@ -38,12 +38,29 @@ class Category extends React.Component {
       }
     })
     .then(res => {
-      // this.structureData(res);
       this.restaurants = res.data;
     })
-    .catch(error => {
-      console.log(error);
-    });
+    .catch( err => {
+      console.log(err);
+    })
+
+    
+    // axios
+    // .get(this.config.url.restaurants, {
+    //   headers: {
+    //     "user-key" : this.config.user_key,
+    //     "category" : this.id,
+    //     "entity-id" : this.location_id,
+    //     "entity-type" : this.location_type
+    //   }
+    // })
+    // .then(res => {
+    //   // this.structureData(res);
+    //   this.restaurants = res.data;
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    // });
   }
 
   componentDidMount() {
