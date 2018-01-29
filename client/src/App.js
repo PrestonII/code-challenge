@@ -59,16 +59,9 @@ class App extends React.Component {
 
   getCuisines() {
     this.findCuisines()
-      .then(() => {
-        this.findRestaurants();
+      .catch(err => {
+        logError(err);
       })
-      .then(() => {
-        this.mapCuisineData(this.all_cuisines);
-      })
-      .then(() => {
-        this.mapRestaurantData(this.all_restaurants);
-      })
-      .catch(this.logError);
   }
 
   getRestaurant(cuisine) {
@@ -83,14 +76,13 @@ class App extends React.Component {
           return resp.json();
         })
         .then((data) => {
-          this.all_cuisines = data.cuisines;
+          this.all_cuisines = data;
+          resolve(data);
         })
         .catch(err => {
           this.logError(err);
           reject(err);
         });
-
-      resolve(this.all_cuisines);
     })
     .catch(err =>{
       console.log(err);
@@ -99,31 +91,8 @@ class App extends React.Component {
     return promise;
   }
 
-  findRestaurants() {
-    var cuisines = this.all_cuisines;
-
-    cuisines.forEach(cuis => {
-      let cat = cuis.cuisine.cuisine_id;
-      let rests = this.findRestaurantForCategory(cat);
-      if(Object.keys(rests).length > 0){
-        rests.map(rest => {
-          this.all_restaurants.push(rest);
-        });
-      }
-    });
-  }
-
-  findRestaurantForCategory(category) {
-    fetch('api/restaurants')
-      .then(resp => {
-        return resp.json();
-      })
-      .catch(this.logError);
-  }
-
   mapCuisineData(data) {
-    let items = data.cuisines.map(item => {
-      let obj = item.cuisine;
+    let items = data.map(obj => {
       return <li key={obj.cuisine_id}><Category {...obj}/></li>
     });
 
@@ -131,8 +100,7 @@ class App extends React.Component {
   }
 
   mapRestaurantData(data) {
-    let items = data.restaurants.map(item => {
-      let obj = item.restaurant;
+    let items = data.map(obj => {
       return <li key={obj.id}><Restaurant {...obj}/></li>
     });
 

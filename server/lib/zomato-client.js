@@ -59,8 +59,50 @@ Server.prototype.findCuisines = function(result) {
     .then((mapped) =>{
       result.send(mapped);
     })
+    // .then(cuisines => { //does some post sending optimization
+    //   let data = cuisines.map(c => {
+    //     let res = this.findRestaurantsByCategory(c.id);
+    //     return res;
+    //   });
+
+    //   return data;
+    // })
     .catch(err => {
       console.log(`Error! ${err}`);
+    });
+}
+
+Server.prototype.findRestaurantsByCategory = function(category) {
+  const url = config.url.restaurants;
+  const location = '94741';
+  const location_type = 'zone';
+  const sort = "asc";
+
+  axios
+    .get(url, {
+      headers: {
+        'user-key' : config.user_key,
+      },
+      params: {
+        entity_type: location_type,
+        entity_id: location,
+        cuisines: category,
+        order: sort
+      }
+    })
+    .then(res => {
+      console.log(res.data);
+      let value = res.data.hasOwnProperty('restaurants') ? res.data.restaurants : new Array();
+      return value;
+    })
+    .then(data =>{
+      let mapped = this.mapRestaurantData(data);
+      let list = this.setRestaurantCategoryData(category, mapped);
+      return list;
+    })
+    .catch(error => {
+      console.log("Error!");
+      console.log(error);
     });
 }
 
